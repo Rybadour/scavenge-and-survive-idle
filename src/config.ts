@@ -1,4 +1,5 @@
 export default {
   initialFlywheelCharge: 100,
-  flywheelDecay: 0.1,
+  flywheelChargeSpeed: 10,
+  flywheelDecay: 0.5,
 }

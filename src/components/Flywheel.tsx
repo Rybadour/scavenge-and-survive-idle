@@ -1,13 +1,29 @@
 import { pick } from "lodash";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import useStore from "../store";
 
 export default function Flywheel() {
   const power = useStore(s => s.power);
+  const [isHeld, setIsHeld] = useState(false);
+
+  useEffect(() => {
+    let lastTime = Date.now();
+    const intervalId = setInterval(() => {
+      const delta = Date.now() - lastTime;
+      if (isHeld) {
+        power.chargeFlywheel(delta);
+      } else {
+        power.decayFlywheel(delta);
+      }
+      lastTime = Date.now();
+    }, 50);
+    return () => clearInterval(intervalId);
+  }, [power.chargeFlywheel, isHeld]);
 
   return <Container>
     <Title>Flywheel</Title>
-    <Bar>
+    <Bar onMouseDown={() => setIsHeld(true)} onMouseUp={() => setIsHeld(false)}>
       <ChargeMeter width={power.flywheelCharge / power.maxFlywheelCharge * 100} />
     </Bar>
   </Container>;
