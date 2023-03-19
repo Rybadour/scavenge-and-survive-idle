@@ -1,12 +1,34 @@
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import './App.scss';
-import Flywheel from './components/Flywheel';
-import Generator from './components/Generator';
+import Flywheel from './components/flywheel';
+import Generator from './components/generator';
+import Scavenge from './components/scavenge';
+import useStore from './store';
 
 export default function App() {
+  const power = useStore(s => s.power);
+  const scavenging = useStore(s => s.scavenging);
+
+  useEffect(() => {
+    let lastTime = Date.now();
+    const intervalId = setInterval(() => {
+      const delta = Date.now() - lastTime;
+
+      power.update(delta);
+      scavenging.update(delta);
+
+      lastTime = Date.now();
+    }, 50);
+    return () => clearInterval(intervalId);
+  }, [power, scavenging]);
+
+
   return <Container>
     <CenterContent>
       <Generator />
+
+      <Scavenge />
 
       <Flywheel />
     </CenterContent>
